@@ -8,6 +8,16 @@
 
 ---
 
+## 2026-05-20
+
+### InfraOS Completion
+- Installed `/commit` command (was missing despite prior session noting it as done)
+- Updated `/prime` to load `HISTORY.md` and `docs/_index.md` each session
+- Added documentation check phase to `/implement`
+- Committed previously untracked `HISTORY.md` and `docs/` system
+
+---
+
 ## 2026-05-18
 
 ### Initial Setup
