@@ -5,6 +5,8 @@
 ## Read
 
 ./context
+HISTORY.md
+docs/_index.md
 
 ## Summary
 
