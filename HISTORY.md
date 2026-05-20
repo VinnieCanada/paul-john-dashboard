@@ -10,6 +10,22 @@
 
 ## 2026-05-20
 
+### ProductivityOS Installation
+- Full GTD system installed: `gtd/` folder with 8 files (dashboard, inbox, projects, next-actions, waiting-for, someday-maybe, areas, review-checklist)
+- `/process` command — interactive inbox processing using GTD decision tree
+- `/review` command — guided weekly review across 5 phases (Get Clear, Get Current, Get Creative, Rebuild)
+- `scripts/refresh_dashboard.py` — auto-recomputes all dashboard counts from source files
+- `reference/gtd-methodology.md` — complete GTD reference guide
+- Areas customized for solo AI agency with AIOS Workspace as dedicated area
+- Review checklist cross-wired with `context/outreach.md` for pipeline visibility during weekly review
+
+### IntelOS Installation
+- Installed Fireflies.ai meeting intelligence pipeline
+- Scripts: `scripts/intel/collect_fireflies.py`, `classify.py`, `collect_all.py`, `db.py`
+- SQLite database at `data/intel.db` — stores meetings, transcripts, action items
+- Windows Task Scheduler job (AIOS-IntelCollect) runs daily at 7:05 AM
+- Queried and retrieved action items from Gareth Davies meeting
+
 ### DataOS Installation
 - Installed full DataOS pipeline: `db.py`, `config.py`, `collect.py`, `generate_metrics.py`
 - FX rates starter collector running — 7 currencies tracked daily, no API key needed
