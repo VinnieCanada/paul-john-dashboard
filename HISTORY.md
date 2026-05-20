@@ -10,6 +10,13 @@
 
 ## 2026-05-20
 
+### DataOS Installation
+- Installed full DataOS pipeline: `db.py`, `config.py`, `collect.py`, `generate_metrics.py`
+- FX rates starter collector running — 7 currencies tracked daily, no API key needed
+- `context/key-metrics.md` auto-generates on every collection run, loaded by `/prime`
+- Windows Task Scheduler job (AIOS-DataCollect) runs daily at 7:00 AM
+- Framework ready for real data sources (Stripe, Google Sheets, GA) as they come online
+
 ### InfraOS Completion
 - Installed `/commit` command (was missing despite prior session noting it as done)
 - Updated `/prime` to load `HISTORY.md` and `docs/_index.md` each session
