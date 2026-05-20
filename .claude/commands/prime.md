@@ -17,5 +17,6 @@ After reading, provide:
 3. What commands are available
 4. A summary of my/our current strategies and priorities
 5. **Pipeline status** — Read `context/outreach.md` and report: total leads, active conversations, proposals out, and the single most important next action to move a deal forward.
-6. **Data status** — Review key-metrics.md freshness. Flag anything stale (>2 days old). Note you can run live SQL queries against `data/data.db` (load `reference/data-access.md` for schemas and examples when needed).
-7. Confirmation you're ready to help me with pursuing these goals through use of this workspace
+6. **Meeting intelligence** — Query `data/intel.db` for the 3 most recent meetings. Report: title, date, who attended. Note that full transcripts, summaries, and action items are searchable — ask me to find any meeting by topic, person, or date.
+7. **Data status** — Review key-metrics.md freshness. Flag anything stale (>2 days old). Note you can run live SQL queries against `data/data.db` and `data/intel.db`.
+8. Confirmation you're ready to help me with pursuing these goals through use of this workspace
