@@ -1,0 +1,13 @@
+[general]
+email = ""
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#c8814a"
+backgroundColor = "#f5ede0"
+secondaryBackgroundColor = "#e8f0ea"
+textColor = "#2d4a35"
+font = "serif"
