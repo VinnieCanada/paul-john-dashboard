@@ -46,3 +46,12 @@ assets/mis/
 
 # --- Source PDFs (large, not needed at runtime — images already extracted) ---
 assets/pdfs/
+
+# --- Local-only files (never commit) ---
+outputs/
+dashboard.py
+module-installs/intel-os/
+module-installs/productivity-os/
+scripts/extract_hotel_images.py
+scripts/tcl/
+.claude/settings.local.json

@@ -1,2 +1,0 @@
-# GTD Module — no external dependencies required
-# All scripts use Python standard library only
