@@ -1411,6 +1411,24 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                           <div style="font-size:12px;margin-top:8px;color:#a09070;">
                             Drop your Excel MIS sheet above to load financial data for {hotel_key}
                           </div></div>""", unsafe_allow_html=True)
+                st.markdown("---")
+                _hdr("Finance Overview")
+                total_covers = sum(d["Covers"] for d in h["dining"] if isinstance(d.get("Covers"), int))
+                st.markdown(f"""<div class="prop-about">
+{hotel_key} operates as a {h["star"]} property in {h["location"]}, generating revenue across
+{h["total_rooms"]} rooms in {len(h["accommodation"])} categories and {len(h["dining"])} dining outlets
+with a combined seating capacity of {total_covers} covers.
+Financial performance is tracked monthly through MIS reports that compare Actual results against
+Budget and Last Year benchmarks across Revenue, Gross Operating Profit (GOP), and Net Operating Profit (NOP).
+The primary revenue streams are Room Revenue, Food & Beverage, and ancillary income from
+{h.get("spa", "spa and wellness")}, Travel Desk, and Activity operations.
+Cost discipline is monitored through department-wise payroll tracking, energy cost per occupied room,
+and fixed expense management covering Finance Cost, Depreciation, Property Tax, and Insurance.
+Budget variance analysis is conducted monthly to course-correct on occupancy-driven shortfalls
+or cost overruns before they compound at the YTD level.
+Upload the MIS Excel above to activate real-time P&L dashboards, waterfall charts, and drill-down
+comparisons across all line items and months.
+</div>""", unsafe_allow_html=True)
 
             with ops_tabs[1]:
                 st.markdown('<div class="section-hdr">Sales</div>', unsafe_allow_html=True)
@@ -1419,6 +1437,26 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                   <div style="font-size:15px;font-weight:600;">Sales Data Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Connect your PMS or upload a sales report.</div>
                 </div>""", unsafe_allow_html=True)
+                st.markdown("---")
+                _hdr("Sales Overview")
+                attractions = ", ".join(h.get("local_attractions", [])[:3])
+                seg_list = "Direct, Travel Agent, MICE, OTA, and Brand Website"
+                st.markdown(f"""<div class="prop-about">
+{hotel_key} drives revenue across five primary market segments: {seg_list}.
+The property's location in {h["location"]} positions it to capture both leisure travellers
+and corporate or MICE groups, with {len(h.get("banquet", []))} banquet and event venues
+supporting group business.
+Local attractions such as {attractions} form the backbone of experiential selling
+to leisure and FIT travellers.
+The sales team manages rate strategy across {h["total_rooms"]} rooms, working to balance
+occupancy and ARR to maximise RevPAR across the financial year.
+Channel mix optimisation — reducing OTA dependency in favour of Direct and Brand Website bookings —
+is a key lever for improving net revenue realisation.
+MICE and Travel Agent segments are cultivated through account management, FAM trips,
+and rate agreements that provide volume in shoulder and low seasons.
+Connect your PMS or upload a monthly sales report to activate pickup pace, channel mix charts,
+and lead conversion tracking within this tab.
+</div>""", unsafe_allow_html=True)
 
             with ops_tabs[2]:
                 st.markdown('<div class="section-hdr">F&B — Outlet Summary</div>', unsafe_allow_html=True)
@@ -1426,12 +1464,28 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                 st.markdown("")
                 fb1, fb2 = st.columns(2)
                 fb1.metric("Total Outlets", len(h["dining"]))
-                fb2.metric("Total Covers", sum(
-                    d["Covers"] for d in h["dining"] if isinstance(d.get("Covers"), int)
-                ))
+                total_covers = sum(d["Covers"] for d in h["dining"] if isinstance(d.get("Covers"), int))
+                fb2.metric("Total Covers", total_covers)
                 st.markdown("""<div class="ops-placeholder" style="margin-top:14px;">
                   <div style="font-size:12px;">Upload daily F&B report to track outlet-wise revenue.</div>
                 </div>""", unsafe_allow_html=True)
+                st.markdown("---")
+                _hdr("F&B Overview")
+                outlet_names = ", ".join(d["Outlet"] for d in h["dining"])
+                cuisines = ", ".join(set(d["Cuisine"] for d in h["dining"]))
+                st.markdown(f"""<div class="prop-about">
+{hotel_key} operates {len(h["dining"])} dining outlets — {outlet_names} —
+spanning cuisines including {cuisines}, with a total seating capacity of {total_covers} covers.
+F&B is a critical revenue contributor alongside rooms, and performance is tracked through
+covers, Average Per Cover (APC), and outlet-wise Gross Operating Income (GOI).
+Food and Beverage cost percentages are monitored monthly against budget to maintain
+margins while delivering a high-quality guest dining experience.
+The banquet and events segment across {len(h.get("banquet", []))} venues provides
+additional F&B revenue through weddings, conferences, and social events.
+Room Service and in-villa dining add a further revenue stream tied directly to room occupancy.
+Upload a daily F&B report to activate outlet-wise revenue tracking, covers trends,
+APC analysis, and food cost monitoring within this dashboard.
+</div>""", unsafe_allow_html=True)
 
             with ops_tabs[3]:
                 st.markdown('<div class="section-hdr">Content</div>', unsafe_allow_html=True)
@@ -1440,6 +1494,23 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                   <div style="font-size:15px;font-weight:600;">Content Calendar Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Social media and campaigns for {hotel_key}.</div>
                 </div>""", unsafe_allow_html=True)
+                st.markdown("---")
+                _hdr("Content & Marketing Overview")
+                onsite = ", ".join(h.get("onsite", [])[:4])
+                st.markdown(f"""<div class="prop-about">
+{hotel_key}'s content and marketing function drives brand visibility across digital and
+offline channels, supporting both direct bookings and brand equity for The PAUL Group.
+The property's unique experiences — {onsite} — form compelling content pillars
+for social media, email campaigns, and OTA listing optimisation.
+Visual storytelling anchored in the hotel's natural setting in {h["location"]}
+is central to attracting leisure travellers from domestic and international markets.
+Content strategy aligns with seasonal demand cycles, promoting peak-season packages
+while driving footfall in shoulder months through curated experiences and offers.
+The brand website channel is prioritised to reduce commission costs and build
+a direct-booking-first guest relationship over time.
+Campaign performance, post engagement, and campaign-to-booking attribution will be
+trackable here once the Content Calendar and CRM integration are connected.
+</div>""", unsafe_allow_html=True)
 
             with ops_tabs[4]:
                 st.markdown('<div class="section-hdr">Human Resources</div>', unsafe_allow_html=True)
@@ -1448,6 +1519,23 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                   <div style="font-size:15px;font-weight:600;">HR Data Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Team headcount and HR metrics for {hotel_key}.</div>
                 </div>""", unsafe_allow_html=True)
+                st.markdown("---")
+                _hdr("Human Resources Overview")
+                st.markdown(f"""<div class="prop-about">
+{hotel_key} manages its workforce across key departments including Rooms Division,
+Food & Beverage, {h.get("spa", "Spa & Wellness")}, Travel Desk, Administration,
+Engineering (POMEC), IT, and HR — each tracked as a separate payroll cost centre.
+Total Payroll as a percentage of Revenue is one of the most closely watched KPIs in
+hotel operations, with benchmarks typically targeting 18–25% depending on service level and season.
+Headcount planning is tied directly to occupancy forecasts, with seasonal staffing
+adjustments made to balance service standards against labour cost efficiency.
+Training and retention are prioritised given the guest-facing nature of luxury hospitality,
+where consistency of service directly impacts review scores and repeat business.
+HR metrics including attrition rate, cost per hire, training hours, and department-wise
+headcount will be activated once HR system data is connected to this dashboard.
+Upload a monthly HR report or connect your HRMS to track payroll trends, headcount
+by department, and labour cost variance against budget in real time.
+</div>""", unsafe_allow_html=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 
