@@ -40,3 +40,9 @@ data/*.log
 
 # --- Node (if applicable) ---
 node_modules/
+
+# --- Client financial data (never commit to public repo) ---
+assets/mis/
+
+# --- Source PDFs (large, not needed at runtime — images already extracted) ---
+assets/pdfs/

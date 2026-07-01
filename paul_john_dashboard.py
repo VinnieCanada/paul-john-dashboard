@@ -1,4 +1,4 @@
-"""Paul John Group of Hotels — Operations Dashboard"""
+"""PJ Group of Hotels — Operations Dashboard"""
 
 import streamlit as st
 import pandas as pd
@@ -6,133 +6,167 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 st.set_page_config(
-    page_title="Paul John Group — Operations",
+    page_title="PJ Group of Hotels — Operations",
     layout="wide",
-    page_icon="🌿",
+    page_icon="👑",
     initial_sidebar_state="collapsed",
 )
 
-# ── STYLES — Sage & Amber on Cream palette ────────────────────────────────────
-# Palette: sage #4a6b52, amber #c8814a, parchment #f5ede0, sand #e0c4a8
+# ── STYLES — Royal Colonial · Victorian palette ───────────────────────────────
+# Palette: midnight navy #14192e, Victorian gold #c9a84c, parchment #f5e6b8, burgundy #6b1c2a
 
 st.html("""
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   /* Global */
   html, body, [class*="css"] {
     font-family: 'Lato', sans-serif;
-    background-color: #f5ede0;
+    background-color: #f5e6b8;
   }
 
-  /* Header */
+  /* ── Header ── */
   .pj-header {
-    background: linear-gradient(135deg, #4a6b52 0%, #2d4a35 100%);
-    color: #f5ede0;
-    padding: 22px 32px;
-    border-radius: 0 0 12px 12px;
-    margin-bottom: 24px;
-    border-bottom: 3px solid #c8814a;
+    background: linear-gradient(180deg, #14192e 0%, #1e2744 100%);
+    color: #f5e6b8;
+    padding: 28px 36px 20px;
+    margin-bottom: 28px;
+    border-top: 4px solid #c9a84c;
+    border-bottom: 4px solid #c9a84c;
+    text-align: center;
+  }
+  .pj-crest {
+    font-size: 13px;
+    color: #c9a84c;
+    letter-spacing: 10px;
+    margin-bottom: 10px;
   }
   .pj-header h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 26px;
+    font-size: 28px;
+    font-weight: 700;
     margin: 0;
-    letter-spacing: 1.5px;
-    color: #f5ede0;
-  }
-  .pj-header .gold { color: #c8814a; }
-  .pj-header p {
-    font-size: 12px;
-    margin: 6px 0 0;
-    color: #b8d4bc;
-    letter-spacing: 0.8px;
+    letter-spacing: 3px;
+    color: #f5e6b8;
     text-transform: uppercase;
   }
+  .pj-rule {
+    color: #c9a84c;
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin: 10px 0 8px;
+  }
+  .pj-header p {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    margin: 0;
+    color: #c9a84c;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-style: italic;
+  }
 
-  /* Section headers */
+  /* ── Section headers ── */
   .section-hdr {
     font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #4a6b52;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b1c2a;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
-    border-bottom: 1px solid #c8814a;
-    padding-bottom: 5px;
-    margin: 22px 0 12px;
+    letter-spacing: 2.5px;
+    border-bottom: 2px double #c9a84c;
+    padding-bottom: 6px;
+    margin: 26px 0 14px;
   }
+  .section-hdr::before { content: '◈  '; color: #c9a84c; }
 
-  /* Hotel subtitle */
+  /* ── Hotel subtitle ── */
   .hotel-sub {
     font-family: 'Playfair Display', serif;
     font-size: 16px;
-    color: #4a6b52;
-    border-left: 3px solid #c8814a;
-    padding-left: 12px;
+    color: #14192e;
+    border-left: 4px solid #c9a84c;
+    padding-left: 14px;
     margin-bottom: 16px;
   }
-  .hotel-sub span { font-size: 11px; color: #7a9e82; font-family: 'Lato', sans-serif; display: block; letter-spacing: 0.5px; }
+  .hotel-sub span { font-size: 11px; color: #7a6040; font-family: 'Lato', sans-serif; display: block; letter-spacing: 0.5px; }
 
-  /* Streamlit metric tweaks */
-  [data-testid="stMetricValue"] { font-family: 'Playfair Display', serif; color: #4a6b52; }
-  [data-testid="stMetricLabel"] { font-family: 'Lato', sans-serif; color: #6b8c72; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+  /* ── Streamlit metric tweaks ── */
+  [data-testid="stMetricValue"] { font-family: 'Playfair Display', serif; color: #14192e; font-size: 24px !important; }
+  [data-testid="stMetricLabel"] { font-family: 'Playfair Display', serif; color: #7a6040; text-transform: uppercase; font-size: 10px; letter-spacing: 1.2px; }
 
-  /* Tabs — spaced out */
-  [data-baseweb="tab-list"] { background: #4a6b52; border-radius: 10px; padding: 6px 8px; gap: 6px; flex-wrap: nowrap; overflow-x: auto; }
-  [data-baseweb="tab"] { color: #c8dfc8 !important; font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.3px; border-radius: 7px; padding: 10px 22px !important; white-space: nowrap; }
-  [aria-selected="true"][data-baseweb="tab"] { background: #c8814a !important; color: #2d4a35 !important; font-weight: 700 !important; }
+  /* ── Tabs ── */
+  [data-baseweb="tab-list"] { background: #14192e; border-radius: 4px; padding: 6px 8px; gap: 5px; flex-wrap: nowrap; overflow-x: auto; border: 1px solid #c9a84c; }
+  [data-baseweb="tab"] { color: #9aaccf !important; font-family: 'Playfair Display', serif; font-size: 12px; letter-spacing: 1px; border-radius: 3px; padding: 10px 22px !important; white-space: nowrap; text-transform: uppercase; }
+  [aria-selected="true"][data-baseweb="tab"] { background: #c9a84c !important; color: #14192e !important; font-weight: 700 !important; }
 
-  /* Dataframe */
-  [data-testid="stDataFrame"] { border: 1px solid #e0c4a8; border-radius: 6px; }
+  /* ── Dataframe ── */
+  [data-testid="stDataFrame"] { border: 1px solid #c9a84c; border-radius: 3px; }
 
-  /* Expander */
-  [data-testid="stExpander"] { border: 1px solid #e0c4a8; border-radius: 6px; background: #fffaf5; }
+  /* ── Expander ── */
+  [data-testid="stExpander"] { border: 1px solid #c9a84c; border-radius: 3px; background: #fdf5e0; }
 
-  /* House status badges */
-  .badge-green { background:#eaf3ec; color:#2d4a35; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid #7aaa82; }
-  .badge-red   { background:#fce8e6; color:#7f1d1d; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid #e8a09a; }
-  .badge-gold  { background:#fef3e2; color:#7a4500; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid #c8814a; }
-  .badge-blue  { background:#eaf0f5; color:#1a3a6b; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid #8ab0d0; }
+  /* ── House status badges ── */
+  .badge-green { background:#e8f0e4; color:#1e3d22; padding:4px 12px; border-radius:3px; font-size:12px; font-weight:700; border:1px solid #4a7a52; }
+  .badge-red   { background:#f0e0e2; color:#6b1c2a; padding:4px 12px; border-radius:3px; font-size:12px; font-weight:700; border:1px solid #9a3040; }
+  .badge-gold  { background:#f5ecd0; color:#6b4a0a; padding:4px 12px; border-radius:3px; font-size:12px; font-weight:700; border:1px solid #c9a84c; }
+  .badge-blue  { background:#e0e6f0; color:#14192e; padding:4px 12px; border-radius:3px; font-size:12px; font-weight:700; border:1px solid #4a6a9a; }
 
-  /* Footer */
-  .cw-footer { text-align:center; color:#7a9e82; font-size:11px; margin-top:30px; padding:16px; border-top:1px solid #e0c4a8; letter-spacing:0.5px; }
+  /* ── Footer ── */
+  .cw-footer { text-align:center; color:#7a6040; font-size:11px; margin-top:30px; padding:16px; border-top:2px double #c9a84c; letter-spacing:2px; font-family:'Playfair Display',serif; font-style:italic; }
+
+  /* ── Mobile responsive ── */
+  @media screen and (max-width: 768px) {
+    .main .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; padding-top: 0.5rem !important; }
+    .pj-header { padding: 16px; }
+    .pj-header h1 { font-size: 18px; letter-spacing: 1.5px; }
+    .pj-header p  { font-size: 10px; }
+    .pj-crest { letter-spacing: 6px; }
+    .section-hdr { font-size: 10px; margin: 14px 0 8px; }
+    [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; }
+    [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; min-width: 100% !important; }
+    [data-testid="stMetricValue"] { font-size: 18px !important; }
+    [data-testid="stMetricLabel"] { font-size: 10px !important; }
+    [data-baseweb="tab-list"] { padding: 4px 6px; gap: 3px; }
+    [data-baseweb="tab"] { font-size: 10px !important; padding: 8px 12px !important; }
+    [data-testid="stDataFrame"] { overflow-x: auto; }
+  }
 </style>
 """)
 
 # ── STATIC DATA ───────────────────────────────────────────────────────────────
 
 HOTELS = {
-    "Coorg Wilderness": {
-        "full_name": "Coorg Wilderness Resort & Spa",
+    "COORG W": {
+        "full_name": "COORG W Resort & Spa",
         "location": "Coorg, Karnataka",
         "rooms": 104,
-        "color": "#8b4513",
+        "color": "#1e3d22",
         "date": "10-06-2026",
     },
     "The Paul, Bengaluru": {
         "full_name": "The Paul, Bengaluru",
         "location": "Bengaluru, Karnataka",
         "rooms": 120,
-        "color": "#a0522d",
+        "color": "#6b1c2a",
         "date": "10-06-2026",
     },
     "Fort Kochi": {
         "full_name": "Fort Kochi — A Paul John Hotel",
         "location": "Kochi, Kerala",
         "rooms": 65,
-        "color": "#c8814a",
+        "color": "#14192e",
         "date": "10-06-2026",
     },
     "Kumarakom Lake Resort": {
         "full_name": "Kumarakom Lake Resort",
         "location": "Kumarakom, Kerala",
         "rooms": 90,
-        "color": "#b5651d",
+        "color": "#4a2d10",
         "date": "10-06-2026",
     },
 }
 
-# June 2026 occupancy — Coorg Wilderness (from screenshots)
+# June 2026 occupancy — COORG W (from screenshots)
 COORG_JUNE = [
     ("01-06", "Mon", 102, 98), ("02-06", "Tue", 96, 92), ("03-06", "Wed", 88, 85),
     ("04-06", "Thu", 104, 100), ("05-06", "Fri", 98, 94), ("06-06", "Sat", 104, 100),
@@ -163,7 +197,7 @@ FORT_KOCHI_JUNE = gen_occ(52, 65)
 PAUL_KOL_JUNE = gen_occ(75, 90)
 
 HOTEL_OCC_DATA = {
-    "Coorg Wilderness": COORG_JUNE,
+    "COORG W": COORG_JUNE,
     "The Paul, Bengaluru": PAUL_BLR_JUNE,
     "Fort Kochi": FORT_KOCHI_JUNE,
     "Kumarakom Lake Resort": PAUL_KOL_JUNE,
@@ -171,7 +205,7 @@ HOTEL_OCC_DATA = {
 
 # House status
 HOUSE_STATUS = {
-    "Coorg Wilderness":     {"Arrivals": 39, "Departures": 20, "Stayovers": 42, "Closing": 81},
+    "COORG W":     {"Arrivals": 39, "Departures": 20, "Stayovers": 42, "Closing": 81},
     "The Paul, Bengaluru":  {"Arrivals": 45, "Departures": 28, "Stayovers": 67, "Closing": 112},
     "Fort Kochi":            {"Arrivals": 22, "Departures": 15, "Stayovers": 28, "Closing": 50},
     "Kumarakom Lake Resort":      {"Arrivals": 31, "Departures": 20, "Stayovers": 52, "Closing": 83},
@@ -179,7 +213,7 @@ HOUSE_STATUS = {
 
 # Meal plan breakdown
 MEAL_PLANS = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "EP":  {"Stayover RM": 0,  "Arrival RM": 0},
         "CP":  {"Stayover RM": 24, "Arrival RM": 22},
         "MAP": {"Stayover RM": 9,  "Arrival RM": 14},
@@ -210,7 +244,7 @@ REV_CATEGORIES = ["Room Revenue", "F&B Revenue", "Spa/Nikaay Revenue", "Activiti
                   "Curio Shop Revenue", "Travel Desk Revenue", "Other Revenue"]
 
 REVENUE_DAY = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "actual":  [1216524, 969345, 58690, 25400, 42031, 58700, 47049],
         "budget":  [1343245, 561492, 73099, 18145,  8608, 25858,  1273],
     },
@@ -229,7 +263,7 @@ REVENUE_DAY = {
 }
 
 REVENUE_MTD = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "actual":  [13358627, 7068121, 616424, 202700, 86453, 198700, 79766],
         "budget":  [12089205, 5053430, 657888, 163301, 77470, 232724, 11456],
     },
@@ -249,7 +283,7 @@ REVENUE_MTD = {
 
 # KPIs per hotel
 KPIS = {
-    "Coorg Wilderness":    {"Occ%": 78, "ARR": 19621, "RevPAR": 11697, "Closing": 81,  "Paid Rooms": 62},
+    "COORG W":    {"Occ%": 78, "ARR": 19621, "RevPAR": 11697, "Closing": 81,  "Paid Rooms": 62},
     "The Paul, Bengaluru": {"Occ%": 93, "ARR": 25800, "RevPAR": 24000, "Closing": 112, "Paid Rooms": 108},
     "Fort Kochi":           {"Occ%": 77, "ARR": 16200, "RevPAR": 12000, "Closing": 50,  "Paid Rooms": 48},
     "Kumarakom Lake Resort":       {"Occ%": 92, "ARR": 21500, "RevPAR": 19800, "Closing": 83,  "Paid Rooms": 80},
@@ -257,7 +291,7 @@ KPIS = {
 
 # Reservation pace
 PACE = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "Budgeted RN": 2670, "Actual BOB RN": 2073, "Budgeted ARR": 15092,
         "Actual ARR BOB": 15633, "Budgeted Revenue": 40297350, "Actual Revenue": 32407149,
         "Budgeted Pace": 86, "Current Pace": 29, "Required Pace": 27, "Required ARR": 13216,
@@ -279,7 +313,7 @@ PACE = {
     },
 }
 
-# Arrivals — Coorg Wilderness (from screenshots)
+# Arrivals — COORG W (from screenshots)
 COORG_ARRIVALS = [
     {"Room": "418,519", "Guest": "Mr. Harish Baluja",       "ETA": "15:00", "Rooms/Pax": "2/4 Pax", "Meal": "AP",  "Checkout": "13-Jun", "Source": "Simmi Delhi",    "SPL": "Pure veg"},
     {"Room": "102,202", "Guest": "Mr. Niraj Thakkar",       "ETA": "15:00", "Rooms/Pax": "2/4 Pax", "Meal": "CP",  "Checkout": "13-Jun", "Source": "Gujarat Sales",  "SPL": "—"},
@@ -314,7 +348,7 @@ COORG_ARRIVALS = [
 
 # Room rates
 ROOM_RATES = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "Wilderness Grove View Suite": 25500,
         "Wilderness Hill View Suite":  28500,
         "Grand Grove View Suite":      31500,
@@ -347,9 +381,9 @@ ROOM_RATES = {
     },
 }
 
-# Weekly data — Coorg Wilderness (from screenshot)
+# Weekly data — COORG W (from screenshot)
 WEEKLY = {
-    "Coorg Wilderness": {
+    "COORG W": {
         "Fri 11": (85, 81.73), "Sat 12": (95, 91.35), "Sun 13": (100, 96.15),
         "Mon 14": (72, 69.23), "Tue 15": (60, 57.69), "Tue 16": (43, 41.35), "Wed 17": (34, 32.69),
     },
@@ -367,7 +401,7 @@ WEEKLY = {
     },
 }
 
-# Packages — Coorg Wilderness
+# Packages — COORG W
 PACKAGES = [
     {"Package": "Transfer Package",      "Arrivals": "—", "Inhouse": "—",
      "Inclusions": "MAP Meal Plan. Guided in-house activities. Round trip transportation from Bangalore, Mangalore and Kannur."},
@@ -401,12 +435,12 @@ def rev_bar_chart(categories, actual, budget, color):
     fig.add_bar(name="Actual", x=categories, y=actual,
                 marker_color=color, opacity=0.85)
     fig.add_bar(name="Budget", x=categories, y=budget,
-                marker_color="#bdbdbd", opacity=0.7)
+                marker_color="#8a7a60", opacity=0.6)
     fig.update_layout(
         barmode="group", height=280, margin=dict(l=10, r=10, t=10, b=40),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
         yaxis=dict(tickformat=",.0f", title=""),
-        plot_bgcolor="#fdf8f2", paper_bgcolor="#f5ede0",
+        plot_bgcolor="#fdf5e0", paper_bgcolor="#f5e6b8",
         font=dict(size=11),
     )
     return fig
@@ -428,7 +462,7 @@ def occ_line_chart(data, color):
         height=220, margin=dict(l=10, r=10, t=10, b=30),
         yaxis=dict(range=[0, 110], title="%", ticksuffix="%"),
         xaxis=dict(title=""),
-        plot_bgcolor="#fdf8f2", paper_bgcolor="#f5ede0",
+        plot_bgcolor="#fdf5e0", paper_bgcolor="#f5e6b8",
         font=dict(size=11), showlegend=False,
     )
     return fig
@@ -440,12 +474,12 @@ def weekly_bar(weekly_data, color):
     fig = go.Figure()
     fig.add_bar(x=labels, y=closing, name="Closing Rooms", marker_color=color, opacity=0.8)
     fig.add_scatter(x=labels, y=occ_pct, name="Occ %", yaxis="y2",
-                    line=dict(color="#ff6f00", width=2), mode="lines+markers")
+                    line=dict(color="#c9a84c", width=2), mode="lines+markers")
     fig.update_layout(
         height=220, margin=dict(l=10, r=10, t=10, b=30),
         yaxis=dict(title="Rooms"),
         yaxis2=dict(title="Occ %", overlaying="y", side="right", range=[0, 110], ticksuffix="%"),
-        plot_bgcolor="#fdf8f2", paper_bgcolor="#f5ede0",
+        plot_bgcolor="#fdf5e0", paper_bgcolor="#f5e6b8",
         font=dict(size=11),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
     )
@@ -455,8 +489,10 @@ def weekly_bar(weekly_data, color):
 
 st.markdown("""
 <div class="pj-header">
-  <h1>🏨 Paul John Group of Hotels</h1>
-  <p>Operations Dashboard &nbsp;|&nbsp; Date: 10 June 2026 &nbsp;|&nbsp; Welcome, Harry</p>
+  <div class="pj-crest">◆ &nbsp; ◆ &nbsp; ◆</div>
+  <h1>The PJ Group of Hotels</h1>
+  <div class="pj-rule">── ✦ ──────────────────── ✦ ──</div>
+  <p>Operations Command &nbsp;·&nbsp; 10th June, 2026 &nbsp;·&nbsp; Presented to Harry</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -631,7 +667,7 @@ for tab, (hotel_key, hotel_info) in zip(tabs, HOTELS.items()):
 
         st.markdown('<div class="section-hdr">Today\'s Arrivals</div>', unsafe_allow_html=True)
 
-        if hotel_key == "Coorg Wilderness":
+        if hotel_key == "COORG W":
             arr_df = pd.DataFrame(COORG_ARRIVALS)
             st.dataframe(
                 arr_df,
@@ -655,7 +691,7 @@ for tab, (hotel_key, hotel_info) in zip(tabs, HOTELS.items()):
 
         # ── SPECIAL PACKAGES (Coorg only) ─────────────────────────────────────
 
-        if hotel_key == "Coorg Wilderness":
+        if hotel_key == "COORG W":
             st.markdown('<div class="section-hdr">Special Package Guests</div>', unsafe_allow_html=True)
             for pkg in PACKAGES:
                 with st.expander(f"**{pkg['Package']}** — Arrivals: {pkg['Arrivals']} | Inhouse: {pkg['Inhouse']}"):
@@ -664,4 +700,4 @@ for tab, (hotel_key, hotel_info) in zip(tabs, HOTELS.items()):
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 
 st.divider()
-st.caption("Paul John Group of Hotels — Operations Dashboard · Built by Vinya AI · Data as of 10-Jun-2026")
+st.caption("PJ Group of Hotels — Operations Dashboard · Built by Vinya AI · Data as of 10-Jun-2026")

@@ -12,8 +12,8 @@
 | Total leads identified | 1 |
 | Contacted | 1 |
 | Active conversations | 0 |
-| Proposals sent | 0 |
-| Won (clients) | 0 |
+| Proposals sent | 1 |
+| Won (clients) | 1 |
 
 ---
 
@@ -21,7 +21,8 @@
 
 | Name | Company | Type | Status | Last Contact | Next Action | Notes |
 |------|---------|------|--------|-------------|-------------|-------|
-| Amrit Nanaiah Chen | Lopamudra Medical Center | Hospital | Contacted | 2026-05-20 | Follow up 2026-05-23 | Intro email sent; follow up in 3 days |
+
+| Krishna | ABC Corp | Logistics | Won | 2026-05-28 | Build consignment automation | $1,500 flat — consignment creation automation |
 
 ---
 
@@ -41,35 +42,7 @@
 
 ## Email Templates
 
-### Amrit Nanaiah Chen — Lopamudra Medical Center
-
-**Email 1 — Intro (sent 2026-05-20)**
-
-> **Subject:** Introduction via [Mutual Contact]
->
-> Hi Amrit,
->
-> [Mutual Contact] suggested I reach out — said you'd be a good person to talk to about what I'm working on.
->
-> I help hospitals and medical practices install what I call an AI Operating System — essentially an intelligence layer built around the business that automates the administrative overhead eating up your team's time. Scheduling, reporting, documentation, internal communication — the recurring work that never goes away.
->
-> I'm in early days, working with a small number of founding clients to build something that actually fits how healthcare practices operate. Thought it might be worth a 20-minute conversation to see if there's a fit.
->
-> Open to a call whenever works for you.
->
-> — Vinya
-
-**Email 2 — Follow-up (send 2026-05-23)**
-
-> **Subject:** Re: Introduction via [Mutual Contact]
->
-> Hi Amrit,
->
-> Just following up on my note from a few days ago. No pressure at all — I know inboxes get busy.
->
-> If a quick 20-minute call sounds useful, I'm happy to work around your schedule. If the timing isn't right, no worries — I'll check back in a few months.
->
-> — Vinya
+_Templates will be added here as real outreach is drafted._
 
 ---
 
@@ -79,5 +52,4 @@ _Add context about the overall outreach effort here — what's working, patterns
 
 ---
 
-_Last updated: 2026-05-20_
-
+_Last updated: 2026-05-28_

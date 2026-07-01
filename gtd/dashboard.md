@@ -14,6 +14,7 @@ _(Nothing flagged right now)_
 ## Active Projects by Area
 
 
+
 ### Main Business
 
 ### Side Projects
@@ -31,6 +32,7 @@ _(Nothing completed yet — your first win is coming!)_
 ---
 
 ## Waiting For (Active)
+
 
 
 _(Nothing delegated yet)_

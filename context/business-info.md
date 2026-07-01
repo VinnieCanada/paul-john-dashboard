@@ -15,13 +15,13 @@
 
 ## Organization Overview
 
-AI agency (name TBD) — a one-person consultancy that installs AI Operating Systems (AIOS) for small businesses and healthcare practices. The core offering: take the AIOS built and proven by the founder on his own agency, and replicate it inside client businesses to eliminate operational overhead and automate recurring tasks.
+**answr.in** — a one-person AI consultancy that installs AI Operating Systems (AIOS) for small businesses and healthcare practices in Coorg and beyond. The core offering: take the AIOS built and proven by the founder on his own agency, and replicate it inside client businesses to eliminate operational overhead and automate recurring tasks. Positioned as Coorg's dedicated AI partner.
 
 ## Target Clients
 
-- **Primary early targets:** Small hospitals, medical/healthcare practices, and small businesses
-- **Why healthcare:** High administrative burden, repetitive processes, clear ROI on automation, and referral networks travel fast within the industry
-- **No niche locked yet** — will sharpen based on which early clients produce the best outcomes
+- **Primary early targets:** Coorg-based businesses — coffee estates, homestays/hotels, healthcare practices, logistics, and local small businesses
+- **Geographic focus:** Coorg (Kodagu), Karnataka — tight-knit business community where referrals travel fast
+- **Why Coorg:** Underserved by AI consultants, strong local business network, clear ROI for high-admin industries like hospitality, agriculture, and healthcare
 
 ## Products / Services
 
