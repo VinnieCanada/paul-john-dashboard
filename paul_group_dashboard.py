@@ -45,9 +45,6 @@ st.html("""
   [data-testid="stMetricValue"] { font-family: 'Playfair Display', serif; color: #14192e; font-size: 24px !important; }
   [data-testid="stMetricLabel"] { font-family: 'Playfair Display', serif; color: #7a6040; text-transform: uppercase; font-size: 10px; letter-spacing: 1.2px; }
 
-  [data-baseweb="tab-list"] { background: #14192e; border-radius: 4px; padding: 6px 8px; gap: 5px; flex-wrap: nowrap; overflow-x: auto; border: 1px solid #c9a84c; }
-  [data-baseweb="tab"] { color: #9aaccf !important; font-family: 'Playfair Display', serif; font-size: 12px; letter-spacing: 1px; border-radius: 3px; padding: 10px 20px !important; white-space: nowrap; text-transform: uppercase; }
-  [aria-selected="true"][data-baseweb="tab"] { background: #c9a84c !important; color: #14192e !important; font-weight: 700 !important; }
 
   [data-testid="stDataFrame"] { border: 1px solid #c9a84c; border-radius: 3px; }
 
