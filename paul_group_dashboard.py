@@ -1,6 +1,7 @@
 """PAUL Group of Hotels — Property Intelligence Dashboard 1"""
 
 import io
+import os
 from pathlib import Path
 import streamlit as st
 import pandas as pd
@@ -1181,6 +1182,142 @@ def _mis_compare(mis, lbl):
     st.dataframe(styled, use_container_width=True, hide_index=True)
 
 
+# ── CONTENT ENGINE ────────────────────────────────────────────────────────────
+
+_CONTENT_TYPES = [
+    "Instagram Caption",
+    "Facebook Post",
+    "X (Twitter) Post",
+    "Email Newsletter",
+    "Blog Post",
+    "Website Room Description",
+    "Press Release",
+    "WhatsApp Broadcast",
+    "Google Business Update",
+]
+
+_THEMES = [
+    "Wellness & Ayurveda",
+    "Fine Dining Experience",
+    "Romance & Honeymoon",
+    "Adventure & Explore",
+    "MICE / Corporate Retreat",
+    "Heritage & Culture",
+    "Seasonal Offer / Package",
+    "Wedding & Celebration",
+    "Family Getaway",
+    "Sustainability & Eco",
+]
+
+_TONES = [
+    "Luxurious & Formal",
+    "Warm & Inviting",
+    "Adventurous & Exciting",
+    "Professional & Corporate",
+    "Playful & Fun",
+]
+
+
+def _content_engine_tab(hotel_key: str, h: dict):
+    """AI-powered content generator for a specific hotel."""
+    color = h.get("color", "#c9a84c")
+
+    st.markdown(
+        f'<div class="section-hdr" style="border-left:4px solid {color};padding-left:12px;">'
+        f'✨ Content Engine — {hotel_key}</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<p style="color:#555;font-size:13px;margin-bottom:18px;">'
+        "Generate hotel-specific marketing copy powered by Claude AI. "
+        "Select your format, theme, and tone — then hit Generate.</p>",
+        unsafe_allow_html=True,
+    )
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        content_type = st.selectbox("Content Format", _CONTENT_TYPES, key=f"ct_{hotel_key}")
+    with col2:
+        theme = st.selectbox("Theme / Angle", _THEMES, key=f"th_{hotel_key}")
+    with col3:
+        tone = st.selectbox("Tone", _TONES, key=f"tn_{hotel_key}")
+
+    extra = st.text_area(
+        "Additional Instructions (optional)",
+        placeholder="e.g. 'Mention our monsoon package — 30% off June–August', 'Include a call-to-action to book via WhatsApp', etc.",
+        key=f"ex_{hotel_key}",
+        height=90,
+    )
+
+    # Build rich hotel context for the prompt
+    dining_names = ", ".join(d["Outlet"] for d in h.get("dining", []))
+    room_types = ", ".join(r["Category"] for r in h.get("accommodation", []))
+    attractions = ", ".join(h.get("local_attractions", [])[:6])
+    onsite = ", ".join(h.get("onsite", [])[:6])
+    spa_info = h.get("spa") or "N/A"
+
+    system_prompt = (
+        f"You are a luxury hospitality copywriter for {hotel_key}, "
+        f"a {h.get('star', 'luxury')} property located in {h.get('location', '')}. "
+        f"About the property: {h.get('about', '')} "
+        f"Room types: {room_types}. "
+        f"Dining: {dining_names}. "
+        f"Spa: {spa_info}. "
+        f"Local attractions: {attractions}. "
+        f"Onsite activities: {onsite}. "
+        "Write evocative, aspirational copy that reflects the property's character. "
+        "Never fabricate specific prices or dates unless provided."
+    )
+
+    user_prompt = (
+        f"Write a {content_type} for {hotel_key} with the theme: '{theme}'. "
+        f"Tone: {tone}. "
+        + (f"Additional instructions: {extra.strip()}" if extra.strip() else "")
+    )
+
+    generate_clicked = st.button(
+        "✨ Generate Content",
+        key=f"gen_{hotel_key}",
+        type="primary",
+        use_container_width=False,
+    )
+
+    if generate_clicked:
+        api_key = st.secrets.get("ANTHROPIC_API_KEY", None) or os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            st.error(
+                "ANTHROPIC_API_KEY not found. Add it to your Streamlit secrets "
+                "(Settings → Secrets on Streamlit Cloud) or set it as an environment variable."
+            )
+            return
+
+        try:
+            import anthropic  # lazy import — only needed when generating
+            client = anthropic.Anthropic(api_key=api_key)
+
+            with st.spinner(f"Generating {content_type} for {hotel_key}…"):
+                message = client.messages.create(
+                    model="claude-haiku-4-5-20251001",
+                    max_tokens=1024,
+                    system=system_prompt,
+                    messages=[{"role": "user", "content": user_prompt}],
+                )
+                result = message.content[0].text
+
+            st.markdown("---")
+            st.markdown(
+                f'<div style="background:#f9f6f0;border-left:4px solid {color};'
+                f'padding:20px 24px;border-radius:6px;font-size:14px;line-height:1.7;'
+                f'white-space:pre-wrap;">{result}</div>',
+                unsafe_allow_html=True,
+            )
+            st.code(result, language=None)
+            st.caption("Copy the text above using the copy icon in the top-right corner of the code block.")
+
+        except Exception as e:
+            st.error(f"Content generation failed: {e}")
+
+
 # ── PROPERTY DATA ─────────────────────────────────────────────────────────────
 
 HOTELS = {
@@ -1476,7 +1613,7 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
 
         with view_tabs[1]:
 
-            ops_tabs = st.tabs(["💰 Finance", "📈 Sales", "🍽️ F&B", "📣 Content", "👥 HR"])
+            ops_tabs = st.tabs(["💰 Finance", "📈 Sales", "🍽️ F&B", "✨ Content", "👥 HR"])
 
             with ops_tabs[0]:
                 if hotel_key == "Coorg Wilderness Resort":
@@ -1536,12 +1673,7 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                 </div>""", unsafe_allow_html=True)
 
             with ops_tabs[3]:
-                st.markdown('<div class="section-hdr">Content</div>', unsafe_allow_html=True)
-                st.markdown(f"""<div class="ops-placeholder">
-                  <div style="font-size:36px;margin-bottom:10px;">📣</div>
-                  <div style="font-size:15px;font-weight:600;">Content Calendar Coming Soon</div>
-                  <div style="font-size:12px;margin-top:8px;">Social media and campaigns for {hotel_key}.</div>
-                </div>""", unsafe_allow_html=True)
+                _content_engine_tab(hotel_key, h)
 
             with ops_tabs[4]:
                 st.markdown('<div class="section-hdr">Human Resources</div>', unsafe_allow_html=True)
