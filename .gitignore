@@ -47,11 +47,17 @@ assets/mis/
 # --- Source PDFs (large, not needed at runtime — images already extracted) ---
 assets/pdfs/
 
-# --- Local-only files (never commit) ---
+# --- Local-only / private files (never commit to public repo) ---
 outputs/
 dashboard.py
-module-installs/intel-os/
-module-installs/productivity-os/
-scripts/extract_hotel_images.py
-scripts/tcl/
-.claude/settings.local.json
+paul_john_dashboard.py
+module-installs/
+scripts/
+.claude/
+context/
+gtd/
+docs/
+reference/
+CLAUDE.md
+HISTORY.md
+shell-aliases.md
