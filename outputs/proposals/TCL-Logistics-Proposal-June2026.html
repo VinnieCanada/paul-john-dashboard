@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCL Logistics — AI Operations Proposal · answr.in</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #f8f9fc; color: #1a1a2e; font-size: 14px; line-height: 1.6; }
+
+  .page { max-width: 800px; margin: 40px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 40px rgba(0,0,0,0.08); }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); padding: 40px 48px; color: #fff; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .brand { font-size: 18px; font-weight: 800; letter-spacing: 3px; color: #00f5ff; }
+  .brand-sub { font-size: 10px; color: #ffffff44; letter-spacing: 2px; margin-top: 2px; }
+  .header-meta { text-align: right; font-size: 12px; color: #ffffff55; line-height: 1.8; }
+  .header-meta strong { color: #ffffffaa; }
+  .header h1 { font-size: 26px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 6px; }
+  .header h1 span { color: #00f5ff; }
+  .header-sub { font-size: 13px; color: #ffffff66; }
+
+  /* Body */
+  .body { padding: 40px 48px; }
+
+  .label { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #302b63; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #ebebf5; }
+
+  /* Module cards */
+  .module { border: 1px solid #e8e8f0; border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+  .module-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #fafafe; border-bottom: 1px solid #e8e8f0; }
+  .mod-num { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #aaaacc; }
+  .mod-name { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-top: 2px; }
+  .mod-price { text-align: right; }
+  .mod-price .amt { font-size: 18px; font-weight: 800; color: #302b63; }
+  .mod-price .wks { font-size: 11px; color: #aaaacc; margin-top: 2px; }
+  .agreed { font-size: 10px; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-top: 4px; }
+  .module-body { padding: 16px 20px; }
+  .bullets { list-style: none; }
+  .bullets li { font-size: 13px; color: #2d2d4e; padding: 4px 0 4px 18px; position: relative; border-bottom: 1px solid #f5f5fa; }
+  .bullets li:last-child { border-bottom: none; }
+  .bullets li::before { content: "→"; position: absolute; left: 0; color: #302b63; font-weight: 700; }
+  .outcome { display: flex; align-items: center; gap: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 14px; font-size: 12.5px; color: #166534; font-weight: 500; margin-top: 12px; }
+
+  /* Pricing */
+  .pricing-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 1px solid #e8e8f0; }
+  .pricing-table th { background: #fafafe; font-size: 10px; letter-spacing: 2px; color: #8888aa; text-align: left; padding: 10px 16px; border-bottom: 1px solid #e8e8f0; }
+  .pricing-table td { padding: 12px 16px; border-bottom: 1px solid #f5f5fa; font-size: 13.5px; color: #2d2d4e; }
+  .pricing-table tr:last-child td { background: #fafafe; font-weight: 700; border-top: 2px solid #e0e0ee; border-bottom: none; }
+  .strike { text-decoration: line-through; color: #aaaacc; }
+
+  /* Bundle */
+  .bundle { background: linear-gradient(135deg, #0f0c29, #302b63); border-radius: 14px; padding: 28px 32px; color: #fff; margin-bottom: 16px; }
+  .bundle-lbl { font-size: 10px; letter-spacing: 3px; color: #ffffff44; margin-bottom: 4px; }
+  .bundle-title { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .bundle-desc { font-size: 12.5px; color: #ffffff77; margin-bottom: 20px; }
+  .bundle-row { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .bundle-price .amt { font-size: 38px; font-weight: 800; color: #00f5ff; line-height: 1; }
+  .bundle-price .sub { font-size: 11px; color: #ffffff44; margin-top: 4px; }
+  .bundle-save { background: #00f5ff15; border: 1px solid #00f5ff33; border-radius: 10px; padding: 12px 18px; text-align: right; }
+  .bundle-save .sl { font-size: 10px; color: #00f5ff88; letter-spacing: 1px; }
+  .bundle-save .sa { font-size: 20px; font-weight: 800; color: #00f5ff; }
+
+  .balance { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; }
+  .balance-lbl { font-size: 11px; color: #16a34a; font-weight: 600; }
+  .balance-lbl span { display: block; font-size: 10px; color: #86efac; font-weight: 500; letter-spacing: 1px; margin-bottom: 2px; }
+  .balance-amt { font-size: 26px; font-weight: 800; color: #166534; }
+
+  /* ROI */
+  .roi-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; border: 1px solid #e8e8f0; }
+  .roi-table th { background: #fafafe; font-size: 10px; letter-spacing: 2px; color: #8888aa; text-align: left; padding: 10px 16px; border-bottom: 1px solid #e8e8f0; }
+  .roi-table td { padding: 11px 16px; border-bottom: 1px solid #f5f5fa; font-size: 13px; color: #2d2d4e; }
+  .roi-table tr:last-child td { border-bottom: none; background: #fafafe; font-weight: 700; }
+  .green { color: #16a34a; font-weight: 600; }
+  .payback { margin-top: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; font-weight: 500; }
+
+  /* Timeline */
+  .tl { position: relative; padding-left: 24px; }
+  .tl::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: #e0e0ee; }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-item::before { content: ""; position: absolute; left: -21px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: #302b63; border: 2px solid #fff; box-shadow: 0 0 0 2px #302b63; }
+  .tl-item.done::before { background: #16a34a; box-shadow: 0 0 0 2px #16a34a; }
+  .tl-wk { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #302b63; }
+  .tl-ms { font-size: 13.5px; font-weight: 600; color: #1a1a2e; }
+  .tl-detail { font-size: 12px; color: #8888aa; margin-top: 1px; }
+  .tl-item.done .tl-ms { color: #166534; }
+
+  /* Payment */
+  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pay-item { background: #fafafe; border: 1px solid #e8e8f0; border-radius: 10px; padding: 16px 18px; }
+  .pay-lbl { font-size: 10px; letter-spacing: 2px; color: #aaaacc; margin-bottom: 3px; }
+  .pay-trigger { font-size: 12px; color: #555577; margin-bottom: 6px; }
+  .pay-amt { font-size: 22px; font-weight: 800; color: #302b63; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, #f0f7ff, #eeeeff); border: 1px solid #d0d0ee; border-radius: 14px; padding: 28px 32px; margin-top: 32px; text-align: center; }
+  .cta h3 { font-size: 18px; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; }
+  .cta p { font-size: 13px; color: #666688; margin-bottom: 16px; }
+  .cta-steps { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .cta-step { background: #302b63; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 600; }
+  .cta-step span { color: #00f5ff; margin-right: 5px; }
+  .cta-contact { font-size: 12.5px; color: #888899; }
+  .cta-contact strong { color: #302b63; }
+
+  /* Footer */
+  .footer { background: #fafafe; border-top: 1px solid #e8e8f0; padding: 16px 48px; display: flex; justify-content: space-between; font-size: 10px; color: #aaaacc; letter-spacing: 1px; }
+
+  .section { margin-bottom: 32px; }
+
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="brand">ANSWR.IN</div>
+        <div class="brand-sub">AI OPERATING SYSTEMS · INDIA</div>
+      </div>
+      <div class="header-meta">
+        <div><strong>For:</strong> Ishan Maheshwari, TCL Logistics</div>
+        <div><strong>Date:</strong> June 2026 &nbsp;·&nbsp; <strong>Valid:</strong> 30 days</div>
+      </div>
+    </div>
+    <h1>AI Operations Suite<br>for <span>TCL Logistics</span></h1>
+    <div class="header-sub">Consignment Automation · Email Automation · Live Operations Dashboard</div>
+  </div>
+
+  <div class="body">
+
+    <!-- MODULES -->
+    <div class="section">
+      <div class="label">What We're Building</div>
+
+      <div class="module">
+        <div class="module-head">
+          <div>
+            <div class="mod-num">MODULE 01</div>
+            <div class="mod-name">Consignment Automation</div>
+          </div>
+          <div class="mod-price">
+            <div class="amt">₹1,25,000</div>
+            <div class="wks">3 weeks</div>
+          </div>
+        </div>
+        <div class="module-body">
+          <ul class="bullets">
+            <li>WhatsApp intake — team sends consignment details as a message, system logs it into Fleetx automatically</li>
+            <li>Validates entries before saving — nothing slips through incomplete</li>
+            <li>Daily summary report sent to management every evening</li>
+            <li>Handles 250+ entries a day without manual intervention</li>
+          </ul>
+          <div class="outcome">✓ Saves 3–4 hours of manual data entry every single day</div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head">
+          <div>
+            <div class="mod-num">MODULE 02</div>
+            <div class="mod-name">Email Automation</div>
+          </div>
+          <div class="mod-price">
+            <div class="amt">₹1,20,000</div>
+            <div class="wks">1.5 weeks</div>
+          </div>
+        </div>
+        <div class="module-body">
+          <ul class="bullets">
+            <li>Booking confirmation sent to client automatically on consignment creation</li>
+            <li>Dispatch notification with driver name and ETA when truck leaves</li>
+            <li>Delay alerts sent to clients proactively — before they call you</li>
+            <li>Proof-of-delivery email triggered automatically on trip completion</li>
+            <li>Morning fleet summary delivered to Ishan at 8 AM daily</li>
+          </ul>
+          <div class="outcome">✓ Clients stay informed automatically — inbound "where is my shipment?" calls drop significantly</div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head">
+          <div>
+            <div class="mod-num">MODULE 03</div>
+            <div class="mod-name">TCL Operations Dashboard</div>
+          </div>
+          <div class="mod-price">
+            <div class="amt">₹55,000</div>
+            <div class="wks">2.5 weeks</div>
+          </div>
+        </div>
+        <div class="module-body">
+          <ul class="bullets">
+            <li>Live fleet view — every truck's location, speed, status, driver, cargo, and ETA in one screen</li>
+            <li>Delayed trucks flagged automatically — visible before a client calls</li>
+            <li>Active consignments with status — no need to open Fleetx separately</li>
+            <li>Auto-generated morning report · Weekly KPI summary · Mobile-friendly</li>
+          </ul>
+          <div class="outcome">✓ One screen replaces 5 tabs, 3 phone calls, and a morning of chasing updates</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="section">
+      <div class="label">Investment</div>
+
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Module</th><th>Timeline</th><th style="text-align:right">Price</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Module 1 — Consignment Automation</td>
+            <td style="color:#aaaacc">3 weeks</td>
+            <td style="text-align:right;font-weight:600">₹1,25,000</td>
+          </tr>
+          <tr>
+            <td>Module 2 — Email Automation</td>
+            <td style="color:#aaaacc">1.5 weeks</td>
+            <td style="text-align:right;font-weight:600">₹1,20,000</td>
+          </tr>
+          <tr>
+            <td>Module 3 — Operations Dashboard</td>
+            <td style="color:#aaaacc">2.5 weeks</td>
+            <td style="text-align:right;font-weight:600">₹55,000</td>
+          </tr>
+          <tr>
+            <td>Total (individual)</td>
+            <td style="color:#aaaacc">7 weeks</td>
+            <td style="text-align:right" class="strike">₹3,00,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bundle">
+        <div class="bundle-lbl">FULL SUITE BUNDLE</div>
+        <div class="bundle-title">All Three Modules · One Integrated System</div>
+        <div class="bundle-desc">Built together, the three systems share the same foundation — consignment data flows into the dashboard, which triggers the emails, which feeds the reports.</div>
+        <div class="bundle-row">
+          <div class="bundle-price">
+            <div class="amt">₹2,50,000</div>
+            <div class="sub">Complete · 7 weeks delivery</div>
+          </div>
+          <div class="bundle-save">
+            <div class="sl">YOU SAVE</div>
+            <div class="sa">₹50,000</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ROI -->
+    <div class="section">
+      <div class="label">Return on Investment</div>
+      <table class="roi-table">
+        <thead>
+          <tr><th>What Gets Automated</th><th>Time Saved</th><th>Monthly Value</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Consignment data entry (250/day)</td>
+            <td>~4 hrs/day</td>
+            <td class="green">₹40,000–50,000</td>
+          </tr>
+          <tr>
+            <td>Client emails and follow-up calls</td>
+            <td>~1.5 hrs/day</td>
+            <td class="green">₹15,000–20,000</td>
+          </tr>
+          <tr>
+            <td>Reporting and driver check-ins</td>
+            <td>~1 hr/day</td>
+            <td class="green">₹10,000–15,000</td>
+          </tr>
+          <tr>
+            <td>Total monthly savings</td>
+            <td>~6.5 hrs/day</td>
+            <td class="green">₹65,000–85,000/mo</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="payback">💡 At the lower end, this pays for itself in under 2 months — and saves that amount every month after.</div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="section">
+      <div class="label">Delivery Timeline</div>
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-wk">WEEK 1–2</div>
+          <div class="tl-ms">Fleetx integration + consignment intake built</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-wk">WEEK 3</div>
+          <div class="tl-ms">Consignment automation goes live</div>
+          <div class="tl-detail">Old process runs in parallel for confidence</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-wk">WEEK 4–5</div>
+          <div class="tl-ms">Email workflows built, tested, and tuned</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-wk">WEEK 6–7</div>
+          <div class="tl-ms">Dashboard built, fleet tracker wired in</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-wk">WEEK 7 — HANDOVER</div>
+          <div class="tl-ms">Full system live · Team training · 30-day support begins</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="section">
+      <div class="label">Payment Terms</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div class="pay-item">
+          <div class="pay-lbl">INSTALLMENT 1</div>
+          <div class="pay-trigger">On agreement — kickoff</div>
+          <div class="pay-amt">₹50,000</div>
+        </div>
+        <div class="pay-item">
+          <div class="pay-lbl">INSTALLMENT 2</div>
+          <div class="pay-trigger">Week 3 — Consignment Automation live</div>
+          <div class="pay-amt">₹1,25,000</div>
+        </div>
+        <div class="pay-item">
+          <div class="pay-lbl">INSTALLMENT 3</div>
+          <div class="pay-trigger">Week 7 — Full suite live + handover</div>
+          <div class="pay-amt">₹75,000</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#8888aa;margin-top:10px;padding:10px 14px;background:#f8f8ff;border-radius:8px;">You pay the most only after the core system is live and working. No final installment until everything is delivered to your satisfaction. Includes 30 days post-launch support.</p>
+    </div>
+
+
+  </div>
+
+  <div class="footer">
+    <div>ANSWR.IN · AI OPERATING SYSTEMS · INDIA</div>
+    <div>PROPOSAL VALID 30 DAYS · JUNE 2026</div>
+  </div>
+
+</div>
+</body>
+</html>
