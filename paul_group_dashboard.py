@@ -19,7 +19,13 @@ st.set_page_config(
 st.html("""
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-  html, body, [class*="css"] { font-family: 'Lato', sans-serif; background-color: #FFFFFF; }
+  html, body, [class*="css"] { font-family: 'Lato', sans-serif; background-color: #FFFFFF !important; }
+  .stApp, .stApp > div, section.main, section.main > div,
+  [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"],
+  [data-testid="block-container"], [data-testid="stVerticalBlock"],
+  .stMainBlockContainer, .main .block-container {
+    background-color: #FFFFFF !important;
+  }
 
   .pg-header {
     background: linear-gradient(180deg, #14192e 0%, #1e2744 100%);

@@ -1,12 +1,9 @@
-[general]
-email = ""
-
 [browser]
 gatherUsageStats = false
 
 [theme]
 base = "light"
-primaryColor = "#c9a84c"
+primaryColor = "#FFFFFF"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F2F2F2"
 textColor = "#14192e"
