@@ -884,6 +884,107 @@ def _mis_pl(mis, lbl):
                        mime="application/vnd.ms-excel")
 
 
+# ── Dynamic MIS insights ──────────────────────────────────────────────────────
+
+def _render_mis_insights(mis, lbl):
+    act = mis["active"]
+    tr  = mis["total_rev"]
+    g   = mis["gop"]
+    n   = mis["nop"]
+    occ = mis["occ"]
+    arr = mis["arr"]
+    pp  = mis["payroll_pct"]
+    rr  = mis["room_rev"]
+    fb  = mis["fb_rev"]
+    oe  = mis["total_other_exp"]
+
+    rev_var      = _pct_var(tr["ya"], tr["yb"])
+    gop_m_act    = g["ya"] / tr["ya"] * 100   if tr["ya"]  else 0
+    gop_m_bud    = g["yb"] / tr["yb"] * 100   if tr["yb"]  else 0
+    occ_act      = occ["ya"] * 100
+    occ_bud      = occ["yb"] * 100
+    arr_ly_var   = _pct_var(arr["ya"], arr["yl"])
+    pay_act      = pp["ya"]
+    pay_bud      = pp["yb"]
+    nop_var      = _pct_var(n["ya"], n["yb"])
+    rr_var       = _pct_var(rr["ya"], rr["yb"])
+    fb_var       = _pct_var(fb["ya"], fb["yb"])
+    oe_var       = _pct_var(oe["ya"], oe["yb"])
+
+    # Best and worst months by revenue vs budget
+    month_vars = []
+    for i in range(act):
+        v = _pct_var(tr["act"][i], tr["bud"][i])
+        if v is not None:
+            month_vars.append((lbl[i], v, tr["act"][i], tr["bud"][i]))
+
+    insights = []
+
+    # 1. YTD Revenue headline
+    if rev_var is not None:
+        flag = "🔴" if rev_var < -5 else ("🟡" if rev_var < 0 else "🟢")
+        direction = f"**{abs(rev_var):.1f}% below budget**" if rev_var < 0 else f"**{rev_var:.1f}% ahead of budget**"
+        insights.append(f"{flag} **YTD Revenue** of {_cr(tr['ya'])} is {direction} (budget: {_cr(tr['yb'])}).")
+
+    # 2. Room Revenue vs budget
+    if rr_var is not None and abs(rr_var) > 2:
+        flag = "🔴" if rr_var < -5 else ("🟡" if rr_var < 0 else "🟢")
+        insights.append(f"{flag} **Room Revenue** is {_cr(rr['ya'])} YTD — {abs(rr_var):.1f}% {'below' if rr_var < 0 else 'above'} budget ({_cr(rr['yb'])}).")
+
+    # 3. F&B Revenue vs budget
+    if fb_var is not None and abs(fb_var) > 2:
+        flag = "🔴" if fb_var < -5 else ("🟡" if fb_var < 0 else "🟢")
+        insights.append(f"{flag} **F&B Revenue** is {_cr(fb['ya'])} YTD — {abs(fb_var):.1f}% {'below' if fb_var < 0 else 'above'} budget ({_cr(fb['yb'])}).")
+
+    # 4. GOP margin
+    margin_diff = gop_m_act - gop_m_bud
+    flag = "🔴" if margin_diff < -2 else ("🟡" if margin_diff < 0 else "🟢")
+    insights.append(f"{flag} **GOP Margin** is **{gop_m_act:.1f}%** vs budgeted {gop_m_bud:.1f}% — a {abs(margin_diff):.1f}pp {'erosion' if margin_diff < 0 else 'improvement'} ({_cr(g['ya'])} actual vs {_cr(g['yb'])} budget).")
+
+    # 5. NOP
+    if nop_var is not None:
+        flag = "🔴" if nop_var < -10 else ("🟡" if nop_var < 0 else "🟢")
+        insights.append(f"{flag} **NOP before Tax** stands at {_cr(n['ya'])} YTD ({abs(nop_var):.1f}% {'below' if nop_var < 0 else 'above'} budget of {_cr(n['yb'])}).")
+
+    # 6. Occupancy
+    occ_diff = occ_act - occ_bud
+    flag = "🔴" if occ_diff < -5 else ("🟡" if occ_diff < 0 else "🟢")
+    insights.append(f"{flag} **Occupancy** is **{occ_act:.1f}%** vs budget of {occ_bud:.1f}% ({occ_diff:+.1f}pp) — {'a shortfall that is the primary drag on revenue' if occ_diff < -3 else 'broadly on track' if abs(occ_diff) <= 3 else 'ahead of plan'}.")
+
+    # 7. ARR vs last year
+    if arr_ly_var is not None:
+        flag = "🟢" if arr_ly_var >= 0 else "🔴"
+        insights.append(f"{flag} **ARR** of ₹{arr['ya']:,.0f} is {abs(arr_ly_var):.1f}% {'above' if arr_ly_var >= 0 else 'below'} last year (₹{arr['yl']:,.0f}), {'showing healthy rate growth' if arr_ly_var >= 0 else 'indicating rate dilution or unfavourable segment mix'}.")
+
+    # 8. Payroll % to Revenue
+    if pay_act and pay_bud:
+        pay_diff = pay_act - pay_bud
+        flag = "🔴" if pay_diff > 2 else ("🟡" if pay_diff > 0 else "🟢")
+        insights.append(f"{flag} **Payroll % to Revenue** is **{pay_act:.1f}%** vs budget of {pay_bud:.1f}% ({pay_diff:+.1f}pp) — {'an overrun that warrants headcount review' if pay_diff > 2 else 'a saving versus plan' if pay_diff < 0 else 'within acceptable range'}.")
+
+    # 9. Other expenses
+    if oe_var is not None and abs(oe_var) > 5:
+        flag = "🔴" if oe_var > 5 else "🟢"
+        insights.append(f"{flag} **Other Expenses** of {_cr(oe['ya'])} YTD are {abs(oe_var):.1f}% {'above' if oe_var > 0 else 'below'} budget ({_cr(oe['yb'])}), {'which is compressing GOP' if oe_var > 5 else 'a positive cost control outcome'}.")
+
+    # 10. Worst and best months
+    if month_vars:
+        worst = min(month_vars, key=lambda x: x[1])
+        best  = max(month_vars, key=lambda x: x[1])
+        if worst[1] < -5:
+            insights.append(f"🔴 **Worst month:** {worst[0]} — Revenue of {_cr(worst[2])} was {abs(worst[1]):.1f}% below budget ({_cr(worst[3])}).")
+        if best[1] > 5:
+            insights.append(f"🟢 **Best month:** {best[0]} — Revenue of {_cr(best[2])} beat budget by {best[1]:.1f}% ({_cr(best[3])}).")
+
+    if not insights:
+        return
+
+    st.markdown("---")
+    _hdr(f"MIS Insights — Key Discrepancies ({act} months of actuals)")
+    for line in insights:
+        st.markdown(f"- {line}")
+
+
 # ── Main render ───────────────────────────────────────────────────────────────
 
 def render_cwr_mis_tab():
@@ -935,6 +1036,8 @@ def render_cwr_mis_tab():
     with t_costs:  _mis_costs(mis, lbl)
     with t_pl:     _mis_pl(mis, lbl)
     with t_cmp:    _mis_compare(mis, lbl)
+
+    _render_mis_insights(mis, lbl)
 
 
 # ── Compare tab ──────────────────────────────────────────────────────────────
@@ -1411,24 +1514,6 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
                           <div style="font-size:12px;margin-top:8px;color:#a09070;">
                             Drop your Excel MIS sheet above to load financial data for {hotel_key}
                           </div></div>""", unsafe_allow_html=True)
-                st.markdown("---")
-                _hdr("Finance Overview")
-                total_covers = sum(d["Covers"] for d in h["dining"] if isinstance(d.get("Covers"), int))
-                st.markdown(f"""<div class="prop-about">
-{hotel_key} operates as a {h["star"]} property in {h["location"]}, generating revenue across
-{h["total_rooms"]} rooms in {len(h["accommodation"])} categories and {len(h["dining"])} dining outlets
-with a combined seating capacity of {total_covers} covers.
-Financial performance is tracked monthly through MIS reports that compare Actual results against
-Budget and Last Year benchmarks across Revenue, Gross Operating Profit (GOP), and Net Operating Profit (NOP).
-The primary revenue streams are Room Revenue, Food & Beverage, and ancillary income from
-{h.get("spa", "spa and wellness")}, Travel Desk, and Activity operations.
-Cost discipline is monitored through department-wise payroll tracking, energy cost per occupied room,
-and fixed expense management covering Finance Cost, Depreciation, Property Tax, and Insurance.
-Budget variance analysis is conducted monthly to course-correct on occupancy-driven shortfalls
-or cost overruns before they compound at the YTD level.
-Upload the MIS Excel above to activate real-time P&L dashboards, waterfall charts, and drill-down
-comparisons across all line items and months.
-</div>""", unsafe_allow_html=True)
 
             with ops_tabs[1]:
                 st.markdown('<div class="section-hdr">Sales</div>', unsafe_allow_html=True)
@@ -1437,26 +1522,6 @@ comparisons across all line items and months.
                   <div style="font-size:15px;font-weight:600;">Sales Data Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Connect your PMS or upload a sales report.</div>
                 </div>""", unsafe_allow_html=True)
-                st.markdown("---")
-                _hdr("Sales Overview")
-                attractions = ", ".join(h.get("local_attractions", [])[:3])
-                seg_list = "Direct, Travel Agent, MICE, OTA, and Brand Website"
-                st.markdown(f"""<div class="prop-about">
-{hotel_key} drives revenue across five primary market segments: {seg_list}.
-The property's location in {h["location"]} positions it to capture both leisure travellers
-and corporate or MICE groups, with {len(h.get("banquet", []))} banquet and event venues
-supporting group business.
-Local attractions such as {attractions} form the backbone of experiential selling
-to leisure and FIT travellers.
-The sales team manages rate strategy across {h["total_rooms"]} rooms, working to balance
-occupancy and ARR to maximise RevPAR across the financial year.
-Channel mix optimisation — reducing OTA dependency in favour of Direct and Brand Website bookings —
-is a key lever for improving net revenue realisation.
-MICE and Travel Agent segments are cultivated through account management, FAM trips,
-and rate agreements that provide volume in shoulder and low seasons.
-Connect your PMS or upload a monthly sales report to activate pickup pace, channel mix charts,
-and lead conversion tracking within this tab.
-</div>""", unsafe_allow_html=True)
 
             with ops_tabs[2]:
                 st.markdown('<div class="section-hdr">F&B — Outlet Summary</div>', unsafe_allow_html=True)
@@ -1469,23 +1534,6 @@ and lead conversion tracking within this tab.
                 st.markdown("""<div class="ops-placeholder" style="margin-top:14px;">
                   <div style="font-size:12px;">Upload daily F&B report to track outlet-wise revenue.</div>
                 </div>""", unsafe_allow_html=True)
-                st.markdown("---")
-                _hdr("F&B Overview")
-                outlet_names = ", ".join(d["Outlet"] for d in h["dining"])
-                cuisines = ", ".join(set(d["Cuisine"] for d in h["dining"]))
-                st.markdown(f"""<div class="prop-about">
-{hotel_key} operates {len(h["dining"])} dining outlets — {outlet_names} —
-spanning cuisines including {cuisines}, with a total seating capacity of {total_covers} covers.
-F&B is a critical revenue contributor alongside rooms, and performance is tracked through
-covers, Average Per Cover (APC), and outlet-wise Gross Operating Income (GOI).
-Food and Beverage cost percentages are monitored monthly against budget to maintain
-margins while delivering a high-quality guest dining experience.
-The banquet and events segment across {len(h.get("banquet", []))} venues provides
-additional F&B revenue through weddings, conferences, and social events.
-Room Service and in-villa dining add a further revenue stream tied directly to room occupancy.
-Upload a daily F&B report to activate outlet-wise revenue tracking, covers trends,
-APC analysis, and food cost monitoring within this dashboard.
-</div>""", unsafe_allow_html=True)
 
             with ops_tabs[3]:
                 st.markdown('<div class="section-hdr">Content</div>', unsafe_allow_html=True)
@@ -1494,23 +1542,6 @@ APC analysis, and food cost monitoring within this dashboard.
                   <div style="font-size:15px;font-weight:600;">Content Calendar Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Social media and campaigns for {hotel_key}.</div>
                 </div>""", unsafe_allow_html=True)
-                st.markdown("---")
-                _hdr("Content & Marketing Overview")
-                onsite = ", ".join(h.get("onsite", [])[:4])
-                st.markdown(f"""<div class="prop-about">
-{hotel_key}'s content and marketing function drives brand visibility across digital and
-offline channels, supporting both direct bookings and brand equity for The PAUL Group.
-The property's unique experiences — {onsite} — form compelling content pillars
-for social media, email campaigns, and OTA listing optimisation.
-Visual storytelling anchored in the hotel's natural setting in {h["location"]}
-is central to attracting leisure travellers from domestic and international markets.
-Content strategy aligns with seasonal demand cycles, promoting peak-season packages
-while driving footfall in shoulder months through curated experiences and offers.
-The brand website channel is prioritised to reduce commission costs and build
-a direct-booking-first guest relationship over time.
-Campaign performance, post engagement, and campaign-to-booking attribution will be
-trackable here once the Content Calendar and CRM integration are connected.
-</div>""", unsafe_allow_html=True)
 
             with ops_tabs[4]:
                 st.markdown('<div class="section-hdr">Human Resources</div>', unsafe_allow_html=True)
@@ -1519,23 +1550,6 @@ trackable here once the Content Calendar and CRM integration are connected.
                   <div style="font-size:15px;font-weight:600;">HR Data Coming Soon</div>
                   <div style="font-size:12px;margin-top:8px;">Team headcount and HR metrics for {hotel_key}.</div>
                 </div>""", unsafe_allow_html=True)
-                st.markdown("---")
-                _hdr("Human Resources Overview")
-                st.markdown(f"""<div class="prop-about">
-{hotel_key} manages its workforce across key departments including Rooms Division,
-Food & Beverage, {h.get("spa", "Spa & Wellness")}, Travel Desk, Administration,
-Engineering (POMEC), IT, and HR — each tracked as a separate payroll cost centre.
-Total Payroll as a percentage of Revenue is one of the most closely watched KPIs in
-hotel operations, with benchmarks typically targeting 18–25% depending on service level and season.
-Headcount planning is tied directly to occupancy forecasts, with seasonal staffing
-adjustments made to balance service standards against labour cost efficiency.
-Training and retention are prioritised given the guest-facing nature of luxury hospitality,
-where consistency of service directly impacts review scores and repeat business.
-HR metrics including attrition rate, cost per hire, training hours, and department-wise
-headcount will be activated once HR system data is connected to this dashboard.
-Upload a monthly HR report or connect your HRMS to track payroll trends, headcount
-by department, and labour cost variance against budget in real time.
-</div>""", unsafe_allow_html=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 
