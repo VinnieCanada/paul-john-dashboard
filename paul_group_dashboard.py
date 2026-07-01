@@ -19,7 +19,7 @@ st.set_page_config(
 st.html("""
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-  html, body, [class*="css"] { font-family: 'Lato', sans-serif; background-color: #f5e6b8; }
+  html, body, [class*="css"] { font-family: 'Lato', sans-serif; background-color: #FFFFFF; }
 
   .pg-header {
     background: linear-gradient(180deg, #14192e 0%, #1e2744 100%);
@@ -34,7 +34,7 @@ st.html("""
   .section-hdr { font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; color: #6b1c2a; text-transform: uppercase; letter-spacing: 2.5px; border-bottom: 2px double #c9a84c; padding-bottom: 6px; margin: 22px 0 12px; }
   .section-hdr::before { content: '◈  '; color: #c9a84c; }
 
-  .prop-about { font-family: 'Lato', sans-serif; font-size: 14px; color: #2a1a0a; line-height: 1.7; background: #fdf5e0; border-left: 4px solid #c9a84c; padding: 14px 18px; border-radius: 0 6px 6px 0; margin-bottom: 16px; }
+  .prop-about { font-family: 'Lato', sans-serif; font-size: 14px; color: #2a1a0a; line-height: 1.7; background: #F8F8F8; border-left: 4px solid #c9a84c; padding: 14px 18px; border-radius: 0 6px 6px 0; margin-bottom: 16px; }
 
   [data-testid="stMetricValue"] { font-family: 'Playfair Display', serif; color: #14192e; font-size: 24px !important; }
   [data-testid="stMetricLabel"] { font-family: 'Playfair Display', serif; color: #7a6040; text-transform: uppercase; font-size: 10px; letter-spacing: 1.2px; }
@@ -45,7 +45,7 @@ st.html("""
 
   [data-testid="stDataFrame"] { border: 1px solid #c9a84c; border-radius: 3px; }
 
-  .ops-placeholder { background: #fdf5e0; border: 1px dashed #c9a84c; border-radius: 6px; padding: 32px; text-align: center; color: #8a7040; font-family: 'Playfair Display', serif; font-style: italic; margin-top: 8px; }
+  .ops-placeholder { background: #F8F8F8; border: 1px dashed #c9a84c; border-radius: 6px; padding: 32px; text-align: center; color: #8a7040; font-family: 'Playfair Display', serif; font-style: italic; margin-top: 8px; }
 
   .pg-footer { text-align:center; color:#7a6040; font-size:11px; margin-top:30px; padding:16px; border-top:2px double #c9a84c; letter-spacing:2px; font-family:'Playfair Display',serif; font-style:italic; }
 
@@ -97,8 +97,8 @@ MAROON = "#8b4513"
 WINE   = "#6b1c2a"
 MUTED  = "#9a8060"
 RED    = "#c0392b"
-_BG    = "#f5e6b8"
-_PBG   = "#fdf5e0"
+_BG    = "#FFFFFF"
+_PBG   = "#FAFAFA"
 _TXT   = "#2a1a0a"
 _GREY  = "#aaaaaa"
 
@@ -861,7 +861,7 @@ def _mis_pl(mis, lbl):
 
     def _style(row):
         if row["Line Item"] in BOLD_SET:
-            return ["font-weight:700;background:#fdf0c8"] * len(row)
+            return ["font-weight:700;background:#F0F0F0"] * len(row)
         if row["Line Item"] == "":
             return [f"background:{_BG}"] * len(row)
         return ["font-family:Lato,sans-serif;font-size:12px"] * len(row)
@@ -1288,7 +1288,7 @@ for tab, (hotel_key, h) in zip(hotel_tabs, HOTELS.items()):
         slug  = h["slug"]
 
         st.markdown(f"""
-        <div style="border-left:4px solid {color}; padding:12px 18px; background:#fdf5e0;
+        <div style="border-left:4px solid {color}; padding:12px 18px; background:#F8F8F8;
                     margin-bottom:18px; border-radius:0 6px 6px 0;">
           <div style="font-family:'Playfair Display',serif; font-size:20px; color:{color}; font-weight:700;">{hotel_key}</div>
           <div style="font-size:12px; color:#7a6040; margin-top:3px;">{h['star']} &nbsp;·&nbsp; {h['location']}</div>
