@@ -1,4 +1,4 @@
-"""PAUL Group of Hotels — Property Intelligence Dashboard"""
+"""PAUL Group of Hotels — Property Intelligence Dashboard 1"""
 
 import io
 from pathlib import Path
